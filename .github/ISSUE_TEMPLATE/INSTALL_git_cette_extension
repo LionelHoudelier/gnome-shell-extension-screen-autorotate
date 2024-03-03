@@ -1,0 +1,3 @@
+cd gnome-shell-extension-screen-autorotate/
+git config --global user.name "Lionel Houdelier"
+git config --global user.email lionel@houdelier.fr
