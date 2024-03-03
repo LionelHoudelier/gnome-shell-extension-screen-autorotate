@@ -15,61 +15,66 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-import Gio from 'gi://Gio';
 
-import * as BusUtils from './busUtils.js';
+'use strict';
+
+const { Gio, GLib } = imports.gi;
+
+const ExtensionUtils = imports.misc.extensionUtils;
+const Me = ExtensionUtils.getCurrentExtension();
+const BusUtils = Me.imports.busUtils;
 const connection = Gio.DBus.session;
 
-export function call_dbus_method(method, params = null, handler) {
-  if (handler != undefined || handler != null) {
-    connection.call(
-      'org.gnome.Mutter.DisplayConfig',
-      '/org/gnome/Mutter/DisplayConfig',
-      'org.gnome.Mutter.DisplayConfig',
-      method,
-      params,
-      null,
-      Gio.DBusCallFlags.NONE,
-      -1,
-      null, handler);
-  } else {
-    connection.call(
-      'org.gnome.Mutter.DisplayConfig',
-      '/org/gnome/Mutter/DisplayConfig',
-      'org.gnome.Mutter.DisplayConfig',
-      method,
-      params,
-      null,
-      Gio.DBusCallFlags.NONE,
-      -1,
-      null);
-  }
-
+function call_dbus_method(method, params = null, handler) {
+    if (handler != undefined || handler != null) {
+        connection.call(
+            'org.gnome.Mutter.DisplayConfig',
+            '/org/gnome/Mutter/DisplayConfig',
+            'org.gnome.Mutter.DisplayConfig',
+            method,
+            params,
+            null,
+            Gio.DBusCallFlags.NONE,
+            -1,
+            null, handler);
+    } else {
+        connection.call(
+            'org.gnome.Mutter.DisplayConfig',
+            '/org/gnome/Mutter/DisplayConfig',
+            'org.gnome.Mutter.DisplayConfig',
+            method,
+            params,
+            null,
+            Gio.DBusCallFlags.NONE,
+            -1,
+            null);
+    }
+    
 }
 
-export function get_state() {
-  return new Promise((resolve, reject) => {
-    call_dbus_method('GetCurrentState', null, (connection, res) => {
-      try {
-        let reply = connection.call_finish(res);
-        let configState = new BusUtils.DisplayConfigState(reply)
-        resolve(configState);
-      } catch (err) {
-        reject(err);
-      }
-
-    });
-  })
+function get_state() {
+    return new Promise((resolve, reject) => {
+        call_dbus_method('GetCurrentState', null, (connection, res) => {
+            try {
+                let reply = connection.call_finish(res);
+                let configState = new BusUtils.DisplayConfigState(reply)
+                resolve(configState);
+            } catch(err) {
+                reject(err);
+            }
+            
+        });
+    })
 }
 
-export function rotate_to(transform) {
-  this.get_state().then(state => {
-    let builtin_monitor = state.builtin_monitor;
-    let logical_monitor = state.get_logical_monitor_for(builtin_monitor.connector);
-    logical_monitor.transform = transform;
-    let variant = state.pack_to_apply(BusUtils.Methods['temporary']);
-    call_dbus_method('ApplyMonitorsConfig', variant);
-  }).catch(err => {
-    console.error(err);
-  })
+function rotate_to(transform) {
+    this.get_state().then( state => {
+        let builtin_monitor = state.builtin_monitor;
+        let logical_monitor = state.get_logical_monitor_for(builtin_monitor.connector);
+        logical_monitor.transform = transform;
+        let variant = state.pack_to_apply( BusUtils.Methods['temporary'] );
+        call_dbus_method('ApplyMonitorsConfig', variant);
+    }).catch(err => {
+        logError(err);
+    })
 }
