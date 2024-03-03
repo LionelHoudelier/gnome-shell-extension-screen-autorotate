@@ -40,7 +40,7 @@ const Orientation = Object.freeze({
   'normal': 3,
   'left-up': 1,
   'bottom-up': 2,
-  'right-up': 0
+  'right-up': 3
 });
 
 var interval = null;
