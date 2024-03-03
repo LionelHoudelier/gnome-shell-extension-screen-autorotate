@@ -28,10 +28,10 @@ const ORIENTATION_LOCK_KEY = 'orientation-lock';
 
 // Orientation names must match those provided by net.hadess.SensorProxy
 const Orientation = Object.freeze({
-  'normal': 0,
+  'normal': 3,
   'left-up': 1,
   'bottom-up': 2,
-  'right-up': 3
+  'right-up': 0
 });
 
 class SensorProxy {
