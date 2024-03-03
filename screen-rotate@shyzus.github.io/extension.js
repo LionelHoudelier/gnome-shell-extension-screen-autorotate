@@ -37,10 +37,10 @@ const shellVersion = Number.parseInt(major);
 
 // Orientation names must match those provided by net.hadess.SensorProxy
 const Orientation = Object.freeze({
-  'normal': 3,
-  'left-up': 1,
-  'bottom-up': 2,
-  'right-up': 3
+  'normal': 1,
+  'left-up': 0,
+  'bottom-up': 3,
+  'right-up': 2
 });
 
 var interval = null;
